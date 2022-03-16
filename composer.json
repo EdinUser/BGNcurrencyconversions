@@ -1,0 +1,25 @@
+{
+  "name": "fallenangelbg/bgncurrencytool",
+  "description": "Currency convertor through Bulgarian Lev, using BNB official courses",
+  "keywords": ["currency", "convert", "lev", "eur", "Currency converter"],
+  "type": "library",
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "Fallenangelbg\\BGNCurrencyTool\\": "src/"
+    }
+  },
+  "authors": [
+    {
+      "name": "Todor Kirilov",
+      "email": "fallenangelbg@protonmail.com"
+    }
+  ],
+  "minimum-stability": "dev",
+  "require": {
+    "php": ">=7.1",
+    "ext-curl": "*",
+    "ext-xml": "*",
+    "ext-json": "*"
+  }
+}
