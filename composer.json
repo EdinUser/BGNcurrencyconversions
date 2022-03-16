@@ -19,7 +19,8 @@
   "require": {
     "php": ">=7.1",
     "ext-curl": "*",
-    "ext-xml": "*",
-    "ext-json": "*"
+    "ext-json": "*",
+    "ext-libxml": "*",
+    "ext-simplexml": "*"
   }
 }
