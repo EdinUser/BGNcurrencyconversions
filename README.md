@@ -7,7 +7,6 @@ It also can return an array with conversions for a list of currencies.
 Convert 100 000 US Dollars to Bulgarian Lev
 ```php
 <?php
-
 use Fallenangelbg\BGNCurrencyTool\currencyConvertor;
 use Fallenangelbg\BGNCurrencyTool\currencyReadExternal;
 
@@ -34,8 +33,6 @@ array(2) {
 ### As a mass converter
 ```php
 <?php
-require __DIR__ . '/../vendor/autoload.php';
-
 use Fallenangelbg\BGNCurrencyTool\currencyConvertor;
 use Fallenangelbg\BGNCurrencyTool\currencyReadExternal;
 

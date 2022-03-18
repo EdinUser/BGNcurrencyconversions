@@ -32,7 +32,7 @@ class currencyConvertor
         $error = "";
         foreach ($currencyArray as $currencyCode => $currencyDetail) {
             if ($currencyCode === $currency) {
-                $currencyValue = $currencyDetail['value'] / $currencyDetail['quantity'];
+                $currencyValue = $currencyDetail['value'];
             }
         }
 
@@ -70,7 +70,7 @@ class currencyConvertor
             $calculateCurrencies = $this->currencyData[$usedCurrency]['value'];
 
             if ($calculateCurrencies != 1) {
-                $newPrice = $priceToCalculate * ($calculateCurrencies / $this->currencyData[$usedCurrency]['quantity']);
+                $newPrice = $priceToCalculate * $calculateCurrencies;
                 $newPrice = round($newPrice, 2);
             } else {
                 $newPrice = round($priceToCalculate, 2);

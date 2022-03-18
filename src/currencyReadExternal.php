@@ -11,20 +11,23 @@ class currencyReadExternal
 
     public function __construct()
     {
+        // This is the current page with XML for the currencies
         $this->BNBPage = "https://www.bnb.bg/Statistics/StExternalSector/StExchangeRates/StERForeignCurrencies/index.htm?download=xml&amp;search=&amp;lang=BG";
     }
 
-    function readCurrency()
+    /**
+     * Read, parse and return currencies
+     * @return array
+     */
+    function readCurrency(): array
     {
-        $result = $this->get_currency_page($this->BNBPage);
-        if (!empty($result['errno'])) {
-            die($result['errmsg']);
-        }
-        $resultCurrency = $result['content'];
-
-        libxml_use_internal_errors(true);
-        $returnData = simplexml_load_string($resultCurrency);
-        $returnData = json_decode(json_encode((array)$returnData), 1);
+        /** Read the currencies. This method can be replaced with a Memcached/REDIS or SQL call. The return array should looks like this:
+        $returnArray["EUR"]['name'] = "Euro";
+        $returnArray["EUR"]['code'] = "EUR";
+        $returnArray["EUR"]['quantity'] = "1";
+        $returnArray["EUR"]['value'] = 0.51129;
+         */
+        $returnData = $this->get_currency_page($this->BNBPage);
 
         // This is a fix for EUR. Euro is not in the table of currencies in the BNB site
         $returnArray["EUR"]['name'] = "Euro";
@@ -60,7 +63,7 @@ class currencyReadExternal
      *
      * @return mixed
      */
-    function get_currency_page(string $url)
+    private function get_currency_page(string $url)
     {
         $user_agent = 'Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/81.0';
 
@@ -86,14 +89,23 @@ class currencyReadExternal
         $content = curl_exec($ch);
         $err = curl_errno($ch);
         $errmsg = curl_error($ch);
-        $header = curl_getinfo($ch);
+        $result = curl_getinfo($ch);
         curl_close($ch);
 
-        $header['errno'] = $err;
-        $header['errmsg'] = $errmsg;
-        $header['content'] = $content;
+        $result['errno'] = $err;
+        $result['errmsg'] = $errmsg;
+        $result['content'] = $content;
 
-        return $header;
+        if (!empty($result['errno'])) {
+            die($result['errmsg']);
+        }
+        $resultCurrency = $result['content'];
+
+        //parse the XML
+        libxml_use_internal_errors(true);
+        $returnData = simplexml_load_string($resultCurrency);
+
+        return json_decode(json_encode((array)$returnData), 1);
     }
 
 }
