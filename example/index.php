@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 require __DIR__ . '/../vendor/autoload.php';
 
 use Fallenangelbg\BGNCurrencyTool\currencyConvertor;
@@ -10,16 +11,31 @@ $usedCurrencies = array(
   "EUR" => "EUR",
 );
 
-$currencyData = (new currencyReadExternal())->readCurrency();
+// This is the current page to read from
+$BNBPage = "https://www.bnb.bg/Statistics/StExternalSector/StExchangeRates/StERForeignCurrencies/index.htm?download=xml&amp;search=&amp;lang=BG";
+$currencyData = array();
+try {
+    $currencyData = (new currencyReadExternal($BNBPage))->readCurrency();
+}
+catch (Exception $e) {
+    die("Error occurred!" . $e);
+}
 $sumToBeConverted = 100000;
 $sumCurrency = "USD";
 
 $currencyConverterTool = new currencyConvertor($usedCurrencies, $currencyData);
-$convertToLev = $currencyConverterTool->convertToLev($sumToBeConverted, $sumCurrency);
-if(!empty($convertToLev['error'])){
-    die($convertToLev['error']);
+try {
+    $convertToLev = $currencyConverterTool->convertToLev($sumToBeConverted, $sumCurrency);
+    var_dump($convertToLev);
 }
-var_dump($convertToLev);
+catch (Exception $e) {
+    die($e);
+}
 
-$convertedCurrencies = $currencyConverterTool->currencyCalculate($convertToLev['sum']);
-var_dump($convertedCurrencies);
+try {
+    $convertedCurrencies = $currencyConverterTool->currencyCalculate($convertToLev['sum']);
+    var_dump($convertedCurrencies);
+}
+catch (Exception $e) {
+    die($e);
+}

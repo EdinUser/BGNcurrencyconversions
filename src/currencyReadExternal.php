@@ -2,6 +2,8 @@
 
 namespace Fallenangelbg\BGNCurrencyTool;
 
+use Exception;
+
 class currencyReadExternal
 {
     /**
@@ -9,24 +11,28 @@ class currencyReadExternal
      */
     private $BNBPage;
 
-    public function __construct()
+    public function __construct(string $BNBPage)
     {
-        // This is the current page with XML for the currencies
-        $this->BNBPage = "https://www.bnb.bg/Statistics/StExternalSector/StExchangeRates/StERForeignCurrencies/index.htm?download=xml&amp;search=&amp;lang=BG";
+        $this->BNBPage = $BNBPage;
     }
 
     /**
      * Read, parse and return currencies
+     *
      * @return array
+     * @throws Exception
      */
     function readCurrency(): array
     {
         /** Read the currencies. This method can be replaced with a Memcached/REDIS or SQL call. The return array should looks like this:
-        $returnArray["EUR"]['name'] = "Euro";
-        $returnArray["EUR"]['code'] = "EUR";
-        $returnArray["EUR"]['quantity'] = "1";
-        $returnArray["EUR"]['value'] = 0.51129;
+         * $returnArray["EUR"]['name'] = "Euro";
+         * $returnArray["EUR"]['code'] = "EUR";
+         * $returnArray["EUR"]['quantity'] = "1";
+         * $returnArray["EUR"]['value'] = 0.51129;
          */
+        if (empty($this->BNBPage)) {
+            throw new Exception("No BNB page to read from!");
+        }
         $returnData = $this->get_currency_page($this->BNBPage);
 
         // This is a fix for EUR. Euro is not in the table of currencies in the BNB site
@@ -62,6 +68,7 @@ class currencyReadExternal
      * @param $url string Web page to curl
      *
      * @return mixed
+     * @throws Exception
      */
     private function get_currency_page(string $url)
     {
@@ -88,16 +95,16 @@ class currencyReadExternal
         curl_setopt_array($ch, $options);
         $content = curl_exec($ch);
         $err = curl_errno($ch);
-        $errmsg = curl_error($ch);
+        $errMsg = curl_error($ch);
         $result = curl_getinfo($ch);
         curl_close($ch);
 
         $result['errno'] = $err;
-        $result['errmsg'] = $errmsg;
+        $result['errMsg'] = $errMsg;
         $result['content'] = $content;
 
         if (!empty($result['errno'])) {
-            die($result['errmsg']);
+            throw new Exception("cURL ERROR: " . $errMsg);
         }
         $resultCurrency = $result['content'];
 

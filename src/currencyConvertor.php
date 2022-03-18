@@ -2,6 +2,8 @@
 
 namespace Fallenangelbg\BGNCurrencyTool;
 
+use Exception;
+
 class currencyConvertor
 {
     /**
@@ -24,6 +26,7 @@ class currencyConvertor
      * @param string $currency From which currency it should be converted
      *
      * @return array
+     * @throws Exception
      */
     function convertToLev(int $sum = 0, string $currency = ''): array
     {
@@ -37,7 +40,7 @@ class currencyConvertor
         }
 
         if ($currencyValue <= 0) {
-            $error = "No currency found!";
+            throw new Exception("Converter error: No matching currency found!");
         } else {
             if (is_array($sum)) {
                 $calculatedSum = round((current($sum) / $currencyValue), 2);
@@ -54,6 +57,7 @@ class currencyConvertor
      * @param string $currencyCode
      *
      * @return array
+     * @throws Exception
      */
     function currencyCalculate(float $priceToCalculate = 0, string $currencyCode = "BGN"): array
     {
@@ -61,7 +65,7 @@ class currencyConvertor
         if ($currencyCode !== "BGN") {
             $convertToLev = $this->convertToLev($priceToCalculate, $currencyCode);
             if (!empty($convertToLev['error'])) {
-                die($convertToLev['error']);
+                throw new Exception("Converter error: " . $convertToLev['error']);
             }
             $priceToCalculate = $convertToLev['sum'];
         }
